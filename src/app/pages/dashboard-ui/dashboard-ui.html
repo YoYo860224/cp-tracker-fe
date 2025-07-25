@@ -1,0 +1,87 @@
+<mat-card class="main-card" appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+            <h2>商品列表</h2>
+        </mat-card-title>
+
+        <div class="card-header-actions">
+            <button mat-icon-button color="primary" (click)="newItem()" matTooltip="新增商品">
+                <mat-icon>library_add</mat-icon>
+            </button>
+        </div>
+    </mat-card-header>
+
+    <mat-card-content>
+        <div class="main-card-content">
+            <mat-form-field appearance="outline">
+                <mat-label>搜尋商品</mat-label>
+                <input matInput [(ngModel)]="searchText" (keyup)="filterItems()"
+                       placeholder="輸入商品名稱或廠牌">
+                <mat-icon matPrefix>search</mat-icon>
+            </mat-form-field>
+
+            @if (displayedItems.length === 0) {
+                @if (searchText) {
+                    <p class="no-items-message">沒有符合條件的商品，請嘗試其他關鍵字。</p>
+                } @else {
+                    <p class="no-items-message">目前沒有商品，請從右上角按鈕圖示新增商品。</p>
+                }
+            } @else {
+                <table mat-table [dataSource]="displayedItems">
+                    <!-- 置頂 -->
+                    <ng-container matColumnDef="pined">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let item" class="pin-column">
+                            <button mat-icon-button [matTooltip]="item.pined ? '取消置頂' : '置頂商品'"
+                                    (click)="togglePined(item); $event.stopPropagation()">
+                                <mat-icon>
+                                    {{ item.pined ? 'favorite' : 'favorite_border' }}
+                                </mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <!-- 品名 -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>品名</th>
+                        <td mat-cell *matCellDef="let item">{{ item.name }}</td>
+                    </ng-container>
+
+                    <!-- 最佳品牌 -->
+                    <ng-container matColumnDef="bestBrand">
+                        <th mat-header-cell *matHeaderCellDef>最佳品牌</th>
+                        <td mat-cell *matCellDef="let item">{{ item.bestBrand ?? '無' }}</td>
+                    </ng-container>
+
+                    <!-- 最佳價格 -->
+                    <ng-container matColumnDef="bestPrice">
+                        <th mat-header-cell *matHeaderCellDef>最佳價格</th>
+                        <td mat-cell *matCellDef="let item">
+                            @if (item.bestPrice) {
+                                ${{ item.bestPrice }} / {{ item.perUnit == 1 ? item.unit : item.perUnit + ' ' + item.unit }}
+                            } @else {
+                                無
+                            }
+                        </td>
+                    </ng-container>
+
+                    <!-- 操作按鈕 -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let item" class="action-column">
+                            <button mat-icon-button matTooltip="新增歷史紀錄"
+                                    (click)="editItem(item); $event.stopPropagation()">
+                                <mat-icon>playlist_add</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                        class="item-row"
+                        (click)="checkItem(row)"></tr>
+                </table>
+            }
+        </div>
+    </mat-card-content>
+</mat-card>

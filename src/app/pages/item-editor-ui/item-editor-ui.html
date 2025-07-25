@@ -1,0 +1,134 @@
+<mat-card class="new-card" appearance="outlined">
+    <mat-card-header>
+        <mat-card-title class="card-title-with-button">
+            <button mat-icon-button (click)="back()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <h2>{{ isEditMode ? '新增歷史紀錄' : '新增商品' }}</h2>
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        <form class="new-card-content-form"
+              [formGroup]="itemForm"
+              (ngSubmit)="submitNewItem()">
+
+            <!-- 商品基本資訊區塊 -->
+            <div class="section-header">
+                <h3>商品基本資訊</h3>
+            </div>
+
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>品項</mat-label>
+                <input matInput formControlName="name" placeholder="請輸入商品名稱" required [readonly]="isEditMode">
+                @if (itemForm.controls.name.hasError('required')) {
+                    <mat-error>
+                        品項為必填欄位
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <!-- 計價單位：perUnit 和 unit 在同一行 -->
+            <div class="pricing-unit-row">
+                <mat-form-field appearance="outline" class="per-unit-field" floatLabel="always" hideRequiredMarker="true">
+                    <mat-label>每</mat-label>
+                    <input matInput type="number" formControlName="perUnit" required [readonly]="isEditMode">
+                    @if (itemForm.controls.perUnit.hasError('required')) {
+                        <mat-error>
+                            每單位數量為必填欄位
+                        </mat-error>
+                    }
+                    @if (itemForm.controls.perUnit.hasError('min')) {
+                        <mat-error>
+                            每單位數量必須大於 0.1
+                        </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="unit-field" floatLabel="always" hideRequiredMarker="true">
+                    <mat-label>單位計價</mat-label>
+                    <input type="text"
+                           matInput
+                           formControlName="unit"
+                           [matAutocomplete]="auto"
+                           [readonly]="isEditMode"
+                           required>
+                    <mat-autocomplete #auto="matAutocomplete">
+                        @for (unit of commonUnits; track unit) {
+                            <mat-option [value]="unit">
+                                {{ unit }}
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+                    @if (itemForm.controls.unit.hasError('required') && !isEditMode) {
+                        <mat-error>
+                            單位為必填欄位
+                        </mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+            <!-- 價格歷史紀錄區塊 -->
+            <div class="section-header">
+                <h3>{{ isEditMode ? '新增價格紀錄' : '價格歷史紀錄' }}</h3>
+            </div>
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>廠牌</mat-label>
+                <input matInput formControlName="brand" placeholder="請輸入廠牌名稱" required>
+                @if (itemForm.controls.brand.hasError('required')) {
+                    <mat-error>
+                        廠牌為必填欄位
+                    </mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>價格</mat-label>
+                <input matInput type="number" formControlName="price" required>
+                @if ((itemForm.controls.price.hasError('required'))) {
+                    <mat-error>
+                        價格為必填欄位
+                    </mat-error>
+                }
+                @if ((itemForm.controls.price.hasError('min'))) {
+                    <mat-error>
+                        價格必須大於等於 0
+                    </mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>數量</mat-label>
+                <input matInput type="number" formControlName="quantity" required>
+                @if (itemForm.controls.unit.value) {
+                    <span matTextSuffix>{{ itemForm.controls.unit.value }}</span>
+                }
+                @if (itemForm.controls.quantity.hasError('required')) {
+                    <mat-error>
+                        數量為必填欄位
+                    </mat-error>
+                }
+                @if (itemForm.controls.quantity.hasError('min')) {
+                    <mat-error>
+                        數量必須大於 0
+                    </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>日期</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
+                <mat-label>備註</mat-label>
+                <textarea matInput formControlName="note" placeholder="選填：可輸入商品相關備註，例如在哪裡購入或有什麼特價活動"></textarea>
+            </mat-form-field>
+        </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button matButton="filled" (click)="submitNewItem()" [disabled]="!itemForm.valid">
+            {{ isEditMode ? '新增歷史紀錄' : '新增商品' }}
+        </button>
+    </mat-card-actions>
+</mat-card>

@@ -1,0 +1,98 @@
+@use '@angular/material' as mat;
+
+.item-card {
+  .item-info {
+    display: flex;
+    margin-bottom: 16px;
+
+    p {
+      margin: 0;
+      padding: 4px 8px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #555;
+    }
+  }
+
+  .item-card-content {
+    margin-top: 10px;
+
+    .history-table {
+      width: 100%;
+
+
+      @include mat.table-overrides((
+        row-item-outline-width: 1px,
+      ));
+
+      tr.note-row {
+        height: 10px;
+
+        @include mat.table-overrides((
+          row-item-outline-width: 1px,
+        ));
+      }
+
+      tr.history-row {
+        @include mat.table-overrides((
+          row-item-outline-width: 0px,
+        ));
+      }
+
+      tr.invalid-item {
+        color: gray;
+      }
+
+
+      td.mat-column-rank {
+        width: 8px;
+        padding: 8px;
+
+        .gold {
+          color: gold;
+        }
+
+        .silver {
+          color: silver;
+        }
+
+        .bronze {
+          color: #cd7f32;
+        }
+      }
+
+      td.mat-column-price {
+        width: 100px;
+      }
+
+      td.mat-column-quantity {
+        width: 100px;
+      }
+
+      td.mat-column-unitPrice {
+        width: 100px;
+      }
+
+      td.mat-column-actions {
+        width: 30px;
+      }
+
+      td.mat-column-note {
+        padding: 0 22px;
+        font-size: 12px;
+        color: #666;
+
+        .note-content {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+
+          width: 100%;
+          margin-bottom: 6px;
+        }
+      }
+    }
+  }
+}
+

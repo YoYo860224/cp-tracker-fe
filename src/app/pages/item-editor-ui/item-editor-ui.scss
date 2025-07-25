@@ -1,0 +1,38 @@
+.new-card {
+  .new-card-content-form {
+    display: flex;
+    flex-direction: column;
+
+    .section-header {
+      margin-bottom: 12px;
+
+      h3 {
+        margin: 0;
+      }
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    .pricing-unit-row {
+      display: flex;
+      gap: 12px;
+
+      .per-unit-field {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .unit-field {
+        flex: 2;
+        max-width: 160px;
+        min-width: 160px;
+      }
+    }
+  }
+
+  mat-form-field {
+    margin-bottom: 12px;
+  }
+}

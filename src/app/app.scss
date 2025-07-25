@@ -1,0 +1,63 @@
+@use '@angular/material' as mat;
+
+.title-bar {
+  height: 60px;
+  @include mat.toolbar-overrides((
+    container-background-color: var(--mat-sys-surface-container-highest),
+    container-text-color: var(--mat-sys-primary),
+  ));
+}
+
+.title-space {
+  flex: 1 1 auto;
+}
+
+.title-text {
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu-icon {
+  margin: 5px;
+  color: var(--mat-sys-primary);
+}
+
+.share-icon {
+  margin: 5px;
+  color: var(--mat-sys-primary);
+}
+
+.sidenav-container {
+  min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
+
+  .sidenav {
+    width: 260px;
+    padding: 10px;
+
+    @include mat.sidenav-overrides((
+      container-background-color: var(--mat-sys-surface-container-high)
+    ));
+
+    .sidenav-content {
+      display: flex;
+      flex-direction: column;
+
+      .sidenav-btn {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+        align-items: center;
+        min-height: 50px;
+      }
+    }
+  }
+
+  .router-outlet {
+    padding: 10px 20px;
+    margin: auto;
+    max-width: 800px;
+  }
+}
+

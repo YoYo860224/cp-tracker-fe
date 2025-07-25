@@ -1,0 +1,129 @@
+@if (item) {
+    <mat-card class="item-card" appearance="outlined">
+        <mat-card-header>
+            <mat-card-title class="card-title-with-button">
+                <button mat-icon-button (click)="back()">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <h2>{{ item.name }}</h2>
+            </mat-card-title>
+
+            <mat-card-subtitle>
+                <div class="item-info">
+                    <p>標準單位：每 {{ item.perUnit }}{{ item.unit }}</p>
+                </div>
+            </mat-card-subtitle>
+
+            <div class="card-header-actions">
+                <button mat-icon-button
+                        color="primary"
+                        (click)="newRecord()"
+                        matTooltip="新增歷史紀錄">
+                    <mat-icon>playlist_add</mat-icon>
+                </button>
+                <button mat-icon-button
+                        color="warn"
+                        (click)="deleteItem()"
+                        matTooltip="刪除商品">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </div>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div class="item-card-content">
+                <table mat-table multiTemplateDataRows [dataSource]="displayedItemHistory" class="history-table">
+                    <!-- 名次 -->
+                    <ng-container matColumnDef="rank">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let element" rowspan="2">
+                            @switch (element.rank) {
+                                @case (1) {
+                                    <mat-icon class="gold">emoji_events</mat-icon>
+                                }
+                                @case (2) {
+                                    <mat-icon class="silver">emoji_events</mat-icon>
+                                }
+                                @case (3) {
+                                    <mat-icon class="bronze">emoji_events</mat-icon>
+                                }
+                            }
+                        </td>
+                    </ng-container>
+
+                    <!-- 品牌 -->
+                    <ng-container matColumnDef="brand">
+                        <th mat-header-cell *matHeaderCellDef>品牌</th>
+                        <td mat-cell *matCellDef="let element">{{ element.brand }}</td>
+                    </ng-container>
+
+                    <!-- 價格 -->
+                    <ng-container matColumnDef="price">
+                        <th mat-header-cell *matHeaderCellDef>價格</th>
+                        <td mat-cell *matCellDef="let element">${{ element.price }}</td>
+                    </ng-container>
+
+                    <!-- 數量 -->
+                    <ng-container matColumnDef="quantity">
+                        <th mat-header-cell *matHeaderCellDef>數量</th>
+                        <td mat-cell *matCellDef="let element">{{ element.quantity }} {{ item.unit }}</td>
+                    </ng-container>
+
+                    <!-- 單價 -->
+                    <ng-container matColumnDef="unitPrice">
+                        <th mat-header-cell *matHeaderCellDef>單價</th>
+                        <td mat-cell *matCellDef="let element">${{ element.unitPrice }}</td>
+                    </ng-container>
+
+                    <!-- 操作按鈕 -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let element">
+                            <button mat-icon-button
+                                    [matMenuTriggerFor]="actionMenu"
+                                    [matMenuTriggerData]="{item: element}">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+
+                            <mat-menu #actionMenu="matMenu">
+                                <ng-template matMenuContent let-item="item">
+                                    <button mat-menu-item (click)="updateRecordValid(item)">
+                                        <mat-icon>{{ item.invalid ? 'check_circle' : 'cancel' }}</mat-icon>
+                                        <span>{{ item.invalid ? '取消無效標記' : '標記無效' }}</span>
+                                    </button>
+                                    <button mat-menu-item (click)="deleteRecord(item)">
+                                        <mat-icon>delete</mat-icon>
+                                        <span>刪除紀錄</span>
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+
+                    <!-- 備註 -->
+                    <ng-container matColumnDef="note">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let element" [colSpan]="displayedColumns.length">
+                            <div class="note-content">
+                                {{ element.note }}
+                                <span></span>
+                                Created at {{ element.date | date:'yyyy-MM-dd' }}
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row
+                        class="history-row"
+                        [class.invalid-item]="row.invalid"
+                        *matRowDef="let row; columns: displayedColumns;"></tr>
+                    <tr mat-row
+                        class="note-row"
+                        *matRowDef="let row; columns: ['note']"></tr>
+                </table>
+            </div>
+        </mat-card-content>
+    </mat-card>
+} @else {
+    <p>載入中...</p>
+}

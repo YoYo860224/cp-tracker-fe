@@ -1,12 +1,34 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [
+    RouterLink,
+    RouterOutlet,
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected title = 'cp-tracker';
+  protected navItem = [
+    {
+      name: 'Dashboard',
+      route: '/dashboard',
+      icon: 'dashboard'
+    },
+    {
+      name: 'User',
+      route: '/user',
+      icon: 'person'
+    },
+  ];
 }
