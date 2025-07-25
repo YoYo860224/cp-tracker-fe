@@ -1,6 +1,6 @@
 {
-  "name": "cp-tracker",
-  "short_name": "cp-tracker",
+  "name": "物價追蹤器",
+  "short_name": "物價追蹤器",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
