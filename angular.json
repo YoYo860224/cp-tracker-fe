@@ -34,6 +34,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "baseHref": "/cp-tracker/",
             "outputPath": "dist/cp-tracker",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
