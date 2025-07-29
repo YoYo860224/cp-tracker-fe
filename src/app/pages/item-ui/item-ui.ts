@@ -37,7 +37,7 @@ export class ItemUi implements OnInit {
 
   // UI
   protected displayedItemHistory: (ItemPriceRecord & { unitPrice: number, rank?: number })[] = [];
-  protected displayedColumns: string[] = [];
+  protected displayedColumns: string[] = ['rank', 'brand', 'price', 'quantity', 'unitPrice', 'actions'];
   private isMobile: boolean = false;
 
   constructor(private dialog: MatDialog,

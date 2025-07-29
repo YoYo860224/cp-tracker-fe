@@ -37,7 +37,7 @@ export class DashboardUi implements OnInit {
 
   // UI
   protected displayedItems: Item[] = [];
-  protected displayedColumns: string[] = [];
+  protected displayedColumns: string[] = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
   private isMobile: boolean = false;
 
   constructor(private router: Router,
