@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -30,25 +30,49 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './dashboard-ui.html',
   styleUrl: './dashboard-ui.scss'
 })
-export class DashboardUi {
+export class DashboardUi implements OnInit {
   // Interactive data
   protected searchText: string = '';
   private items: Item[] = [];
 
   // UI
   protected displayedItems: Item[] = [];
-  protected displayedColumns: string[] = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
+  protected displayedColumns: string[] = [];
+  private isMobile: boolean = false;
 
   constructor(private router: Router,
               private userDataService: UserDataService) {
 
-    // Mock data for demonstration purposes
+  }
+
+  ngOnInit(): void {
+    // 初始化響應式檢測
+    this.checkScreenSize();
+
+    // 訂閱用戶數據服務中的商品列表
     this.userDataService.items$.subscribe({
       next: (items) => {
         this.items = Object.values(items); // 儲存原始數據
         this.filterItems();
       }
-    })
+    });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event?: Event): void {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize(): void {
+    const newIsMobile = window.innerWidth < 600;
+    if (this.isMobile !== newIsMobile) {
+      this.isMobile = newIsMobile;
+      if (this.isMobile) {
+        this.displayedColumns = ['pined', 'itemInfo', 'actions'];
+      } else {
+        this.displayedColumns = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
+      }
+    }
   }
 
   /**

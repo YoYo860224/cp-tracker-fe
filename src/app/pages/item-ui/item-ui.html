@@ -51,6 +51,18 @@
                         </td>
                     </ng-container>
 
+                    <!-- 合併的商品記錄信息列 (供小螢幕) -->
+                    <ng-container matColumnDef="recordInfo">
+                        <th mat-header-cell *matHeaderCellDef>商品記錄</th>
+                        <td mat-cell *matCellDef="let element" class="record-info-column">
+                            <div class="record-info-container">
+                                <div class="record-brand">{{ element.brand }}</div>
+                                <div class="record-price">價格：${{ element.price }} / {{ element.quantity == 1 ? item.unit : element.quantity + ' ' + item.unit }}</div>
+                                <div class="record-unit-price">單價：${{ element.unitPrice }} / {{ item.unit }}</div>
+                            </div>
+                        </td>
+                    </ng-container>
+
                     <!-- 品牌 -->
                     <ng-container matColumnDef="brand">
                         <th mat-header-cell *matHeaderCellDef>品牌</th>

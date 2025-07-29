@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -37,7 +37,8 @@ export class ItemUi implements OnInit {
 
   // UI
   protected displayedItemHistory: (ItemPriceRecord & { unitPrice: number, rank?: number })[] = [];
-  protected displayedColumns: string[] = ['rank', 'brand', 'price', 'quantity', 'unitPrice', 'actions'];
+  protected displayedColumns: string[] = [];
+  private isMobile: boolean = false;
 
   constructor(private dialog: MatDialog,
               private userDataService: UserDataService,
@@ -51,12 +52,32 @@ export class ItemUi implements OnInit {
     this.itemId = this.route.snapshot.params['id']!;
     this.loadItem(this.itemId!);
 
+    // 初始化響應式檢測
+    this.checkScreenSize();
+
     // 訂閱用戶數據服務中的商品列表
     this.userDataService.items$.subscribe({
       next: (items) => {
         this.item = items[this.itemId!];
       }
     });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event?: Event): void {
+    this.checkScreenSize();
+  }
+
+  private checkScreenSize(): void {
+    const newIsMobile = window.innerWidth < 600;
+    if (this.isMobile !== newIsMobile) {
+      this.isMobile = newIsMobile;
+      if (this.isMobile) {
+        this.displayedColumns = ['rank', 'recordInfo', 'actions'];
+      } else {
+        this.displayedColumns = ['rank', 'brand', 'price', 'quantity', 'unitPrice', 'actions'];
+      }
+    }
   }
 
   /**
@@ -88,7 +109,7 @@ export class ItemUi implements OnInit {
   sortingHistory() {
     // 先計算單價
     this.displayedItemHistory = this.item!.records.map((historyItem, index) => {
-      const unitPrice = +((historyItem.price / historyItem.quantity) * this.item!.perUnit).toFixed(2);
+      const unitPrice = +((historyItem.price / historyItem.quantity) * this.item!.perUnit).toFixed(1);
       return {...historyItem, unitPrice};
     });
 

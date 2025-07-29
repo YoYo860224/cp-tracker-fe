@@ -41,6 +41,24 @@
                         </td>
                     </ng-container>
 
+                    <!-- 合併的商品列 (供小螢幕) -->
+                    <ng-container matColumnDef="itemInfo">
+                        <th mat-header-cell *matHeaderCellDef>商品信息</th>
+                        <td mat-cell *matCellDef="let item" class="item-info-column">
+                            <div class="item-info-container">
+                                <div class="item-name">{{ item.name }}</div>
+                                <div class="item-brand">品牌：{{ item.bestBrand ?? '無' }}</div>
+                                <div class="item-price">
+                                    價格：@if (item.bestPrice) {
+                                        ${{ item.bestPrice.toFixed(1) }} / {{ item.perUnit == 1 ? item.unit : item.perUnit + ' ' + item.unit }}
+                                    } @else {
+                                        無
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
                     <!-- 品名 -->
                     <ng-container matColumnDef="name">
                         <th mat-header-cell *matHeaderCellDef>品名</th>
@@ -58,7 +76,7 @@
                         <th mat-header-cell *matHeaderCellDef>最佳價格</th>
                         <td mat-cell *matCellDef="let item">
                             @if (item.bestPrice) {
-                                ${{ item.bestPrice }} / {{ item.perUnit == 1 ? item.unit : item.perUnit + ' ' + item.unit }}
+                                ${{ item.bestPrice.toFixed(1) }} / {{ item.perUnit == 1 ? item.unit : item.perUnit + ' ' + item.unit }}
                             } @else {
                                 無
                             }

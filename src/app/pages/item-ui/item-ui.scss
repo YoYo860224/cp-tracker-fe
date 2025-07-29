@@ -78,6 +78,35 @@
         width: 30px;
       }
 
+      td.mat-column-recordInfo {
+        padding: 12px 8px !important;
+      }
+
+      .record-info-column {
+        .record-info-container {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .record-brand {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--mat-sys-on-surface);
+            margin-bottom: 2px;
+          }
+
+          .record-price {
+            font-size: 12px;
+            color: var(--mat-sys-primary);
+          }
+
+          .record-unit-price {
+            font-size: 12px;
+            color: var(--mat-sys-tertiary);
+          }
+        }
+      }
+
       td.mat-column-note {
         padding: 0 22px;
         font-size: 12px;
@@ -95,4 +124,3 @@
     }
   }
 }
-

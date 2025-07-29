@@ -30,5 +30,32 @@
       width: 30px;
       padding-left: 5px !important;
     }
+
+    .item-info-column {
+      padding: 12px 8px !important;
+    }
+
+    .item-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .item-name {
+        font-weight: 800;
+        font-size: 14px;
+        color: var(--mat-sys-on-surface);
+        margin-bottom: 2px;
+      }
+
+      .item-brand {
+        font-size: 12px;
+        color: var(--mat-sys-primary);
+      }
+
+      .item-price {
+        font-size: 12px;
+        color: var(--mat-sys-tertiary);
+      }
+    }
   }
 }

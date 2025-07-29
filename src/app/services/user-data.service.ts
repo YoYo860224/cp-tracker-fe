@@ -37,7 +37,7 @@ export class UserDataService {
         const validHistory = item.records.filter(h => !h.invalid);
         if (validHistory.length > 0) {
           const best = validHistory.reduce((prev, curr) => (prev.price < curr.price ? prev : curr));
-          item.bestPrice = best.price;
+          item.bestPrice = best.price / best.quantity * item.perUnit;
           item.bestBrand = best.brand;
         }
       }
