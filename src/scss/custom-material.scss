@@ -27,3 +27,8 @@ body {
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
 }
+
+// 如有 mat-error 多一點 margin
+mat-form-field {
+  margin-bottom: 12px;
+}

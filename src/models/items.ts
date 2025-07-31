@@ -33,3 +33,4 @@ export interface ItemPriceRecord {
   /** 是否標註為無效 */
   invalid: boolean;
 }
+

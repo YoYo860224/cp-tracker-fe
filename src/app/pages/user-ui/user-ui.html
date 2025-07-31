@@ -1,2 +1,207 @@
-<!-- 應該要有個登入卡片，一個選項是不登入使用 -->
-施工中
+<div class="user-ui-container">
+    <div class="cards-grid">
+
+        <!-- 使用者資訊卡片 -->
+        <mat-card class="user-info-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>person</mat-icon>
+                    使用者資訊
+                </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="user-details">
+                    <div class="detail-row">
+                        <mat-icon>email</mat-icon>
+                        <span class="label">電子郵件：</span>
+                        <span class="value">{{ userInfo.email }}</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <mat-icon>tag</mat-icon>
+                        <span class="label">UID：</span>
+                        <span class="value">{{ userInfo.uid }}</span>
+                    </div>
+                </div>
+
+                <form [formGroup]="userInfoForm">
+                    <mat-form-field appearance="outline" class="full-width" hideRequiredMarker>
+                        <mat-label>顯示名稱</mat-label>
+                        <input matInput formControlName="displayName">
+                        <mat-icon matSuffix>edit</mat-icon>
+                    </mat-form-field>
+
+                    <div class="form-actions">
+                        <button mat-raised-button class="mat-icon-btn" (click)="updateDisplayName()" [disabled]="!userInfoForm.valid || isUserInfoLoading">
+                            <mat-icon>save</mat-icon>
+                            更新顯示名稱
+                        </button>
+
+                        <button mat-raised-button class="mat-icon-btn" (click)="logout()">
+                            <mat-icon>logout</mat-icon>
+                            登出
+                        </button>
+                    </div>
+
+                    @if (userInfoError) {
+                        <div class="error-alert">
+                            <mat-icon>error</mat-icon>
+                            <span>{{ userInfoError }}</span>
+                        </div>
+                    }
+                </form>
+            </mat-card-content>
+
+            @if (isUserInfoLoading) {
+                <mat-card-footer>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </mat-card-footer>
+            }
+        </mat-card>
+
+        <!-- 更改密碼卡片 -->
+        <mat-card class="user-info-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>lock</mat-icon>
+                    更改密碼
+                </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <form [formGroup]="passwordForm">
+                    <mat-form-field appearance="outline" class="full-width" hideRequiredMarker>
+                        <mat-label>目前密碼</mat-label>
+                        <input matInput type="password" formControlName="oldPassword">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width" hideRequiredMarker>
+                        <mat-label>新密碼</mat-label>
+                        <input matInput type="password" formControlName="newPassword">
+                        <mat-hint>至少 6 個字元</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="full-width" hideRequiredMarker>
+                        <mat-label>確認新密碼</mat-label>
+                        <input matInput type="password" formControlName="confirmPassword">
+                        @if (passwordForm.hasError('passwordMismatch')) {
+                            <mat-error>
+                                密碼不相符
+                            </mat-error>
+                        }
+                    </mat-form-field>
+
+                    <div class="form-actions">
+                        <button mat-raised-button (click)="updatePassword()" [disabled]="!passwordForm.valid || isPasswordLoading">
+                            <mat-icon>security</mat-icon>
+                            更改密碼
+                        </button>
+                    </div>
+
+                    @if (passwordError) {
+                        <div class="error-alert">
+                            <mat-icon>error</mat-icon>
+                            <span>{{ passwordError }}</span>
+                        </div>
+                    }
+                </form>
+            </mat-card-content>
+
+            @if (isPasswordLoading) {
+                <mat-card-footer>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </mat-card-footer>
+            }
+        </mat-card>
+
+        <!-- 雲端儲存狀態卡片 -->
+        <mat-card class="cloud-sync-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>cloud_done</mat-icon>
+                    雲端儲存
+                </mat-card-title>
+                <mat-card-subtitle>
+                    目前為手動同步，未來會加入自動同步功能，請自行注意資料覆蓋，建議僅在新瀏覽器雲端下載
+                </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="sync-status">
+                    <div class="status-indicator">
+                        <mat-icon>cloud_done</mat-icon>
+                        雲端中有 {{ cloudItemCount }} 筆資料
+                    </div>
+                </div>
+
+                <div class="sync-actions">
+                    <button mat-raised-button (click)="syncCloud2Local()" [disabled]="isSyncLoading">
+                        <mat-icon>download</mat-icon>
+                        從雲端下載
+                    </button>
+
+                    <button mat-raised-button (click)="syncLocal2Cloud()" [disabled]="isSyncLoading">
+                        <mat-icon>upload</mat-icon>
+                        從本地上傳
+                    </button>
+                </div>
+
+                @if (syncError) {
+                    <div class="error-alert">
+                        <mat-icon>error</mat-icon>
+                        <span>{{ syncError }}</span>
+                    </div>
+                }
+            </mat-card-content>
+
+            @if (isSyncLoading) {
+                <mat-card-footer>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </mat-card-footer>
+            }
+        </mat-card>
+
+        <!-- Passkey 註冊卡片 (暫無實作) -->
+        <mat-card class="passkey-card" style="display: none">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>fingerprint</mat-icon>
+                    Passkey 管理
+                </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="passkey-info">
+                    <mat-icon class="large-icon">security</mat-icon>
+                    <p>尚未註冊任何 Passkey</p>
+                    <p class="hint">Passkey 提供更安全且便利的登入方式</p>
+                </div>
+
+                <div class="passkey-list">
+                    <div class="passkey-item">
+                        <div class="passkey-details">
+                            <mat-icon>{{ 'verified' }}</mat-icon>
+                            <div class="passkey-text">
+                                <div class="passkey-name">iPhone 15</div>
+                                <div class="passkey-meta">
+                                    註冊於 2025/1/1 • 最近使用：2025/1/1
+                                </div>
+                            </div>
+                        </div>
+                        <button mat-icon-button color="warn" matTooltip="移除 Passkey">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="passkey-actions">
+                    <button mat-raised-button>
+                        <mat-icon>add</mat-icon>
+                        註冊新 Passkey
+                    </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

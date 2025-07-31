@@ -15,7 +15,8 @@ import { CommonModule } from '@angular/common';
 export class HttpRespUi implements OnInit {
   errorCode: string = '';
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute) {
+  }
 
   ngOnInit() {
     // 從路由參數獲取錯誤代碼

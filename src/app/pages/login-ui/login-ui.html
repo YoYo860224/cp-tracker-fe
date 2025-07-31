@@ -1,0 +1,150 @@
+<div class="login-ui-container">
+    <mat-card class="auth-card">
+        <mat-card-header>
+            <mat-card-title>雲端儲存</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+            <mat-tab-group>
+                <!-- 登入分頁 -->
+                <mat-tab label="登入">
+                    <div class="tab-content">
+                        <form [formGroup]="loginForm">
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>電子郵件</mat-label>
+                                <input matInput type="email" formControlName="email" placeholder="請輸入電子郵件" (input)="clearLoginError()">
+                                @if (loginForm.controls.email.hasError('required') && loginForm.controls.email.touched) {
+                                    <mat-error>電子郵件為必填欄位</mat-error>
+                                }
+                                @if (loginForm.controls.email.hasError('email') && loginForm.controls.email.touched) {
+                                    <mat-error>請輸入有效的電子郵件格式</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>密碼</mat-label>
+                                <input matInput type="password" formControlName="password" placeholder="請輸入密碼" (input)="clearLoginError()">
+                                @if (loginForm.controls.password.hasError('required') && loginForm.controls.password.touched) {
+                                    <mat-error>密碼為必填欄位</mat-error>
+                                }
+                                @if (loginForm.controls.password.hasError('minlength') && loginForm.controls.password.touched) {
+                                    <mat-error>密碼長度至少需要 6 個字元</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <div class="button-group">
+                                @if (isLoginLoading) {
+                                    <button matButton="filled" class="mat-icon-btn" disabled>
+                                        <mat-icon class="spin-icon">refresh</mat-icon>
+                                        登入中...
+                                    </button>
+
+                                    <button matButton="outlined" class="mat-icon-btn" disabled>
+                                        <mat-icon>fingerprint</mat-icon>
+                                        使用 Passkey 登入
+                                    </button>
+                                } @else {
+                                    <button matButton="filled" (click)="onLogin()" [disabled]="!loginForm.valid">
+                                        登入
+                                    </button>
+
+                                    <button matButton="outlined" class="mat-icon-btn" (click)="onPasskeyLogin()">
+                                        <mat-icon>fingerprint</mat-icon>
+                                        使用 Passkey 登入
+                                    </button>
+                                }
+                            </div>
+
+                            @if (loginError) {
+                                <div class="error-alert">
+                                    <mat-icon>error</mat-icon>
+                                    <span>{{ loginError }}</span>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </mat-tab>
+
+                <!-- 註冊分頁 -->
+                <mat-tab label="註冊">
+                    <div class="tab-content">
+                        <form [formGroup]="registerForm">
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>電子郵件</mat-label>
+                                <input matInput type="email" formControlName="email" placeholder="請輸入電子郵件"
+                                       (input)="clearRegisterError()">
+                                @if (registerForm.controls.email.hasError('required') && registerForm.controls.email.touched) {
+                                    <mat-error>電子郵件為必填欄位</mat-error>
+                                }
+                                @if (registerForm.controls.email.hasError('email') && registerForm.controls.email.touched) {
+                                    <mat-error>請輸入有效的電子郵件格式</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>使用者名稱</mat-label>
+                                <input matInput type="text" formControlName="username" placeholder="請輸入使用者名稱" (input)="clearRegisterError()">
+                                @if (registerForm.controls.username.hasError('required') && registerForm.controls.username.touched) {
+                                    <mat-error>使用者名稱為必填欄位</mat-error>
+                                }
+                                @if (registerForm.controls.username.hasError('minlength') && registerForm.controls.username.touched) {
+                                    <mat-error>使用者名稱長度至少需要 3 個字元</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>密碼</mat-label>
+                                <input matInput type="password" formControlName="password" placeholder="請輸入密碼" (input)="clearRegisterError()">
+                                @if (registerForm.controls.password.hasError('required') && registerForm.controls.password.touched) {
+                                    <mat-error>密碼為必填欄位</mat-error>
+                                }
+                                @if (registerForm.controls.password.hasError('minlength') && registerForm.controls.password.touched) {
+                                    <mat-error>密碼長度至少需要 6 個字元</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>再確認密碼</mat-label>
+                                <input matInput type="password" formControlName="confirmPassword" placeholder="請再次輸入密碼" (input)="clearRegisterError()">
+                                @if (registerForm.controls.confirmPassword.hasError('required') && registerForm.controls.confirmPassword.touched) {
+                                    <mat-error>請再次輸入密碼</mat-error>
+                                }
+                                @if (registerForm.controls.confirmPassword.hasError('passwordMismatch') && registerForm.controls.confirmPassword.touched) {
+                                    <mat-error>密碼不一致，請重新輸入</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field class="full-width" hideRequiredMarker="true">
+                                <mat-label>邀請碼</mat-label>
+                                <input matInput type="text" formControlName="invite_code" placeholder="請輸入邀請碼" (input)="clearRegisterError()">
+                                @if (registerForm.controls.invite_code.hasError('required') && registerForm.controls.invite_code.touched) {
+                                    <mat-error>邀請碼為必填欄位</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <div class="button-group">
+                                @if (isRegisterLoading) {
+                                    <button matButton="filled" class="mat-icon-btn" disabled>
+                                        <mat-icon class="spin-icon">refresh</mat-icon>
+                                        註冊中...
+                                    </button>
+                                } @else {
+                                    <button matButton="filled" color="accent" (click)="onRegister()" [disabled]="!registerForm.valid">
+                                        註冊
+                                    </button>
+                                }
+                            </div>
+
+                            @if (registerError) {
+                                <div class="error-alert">
+                                    <mat-icon>error</mat-icon>
+                                    <span>{{ registerError }}</span>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card-content>
+    </mat-card>
+</div>
