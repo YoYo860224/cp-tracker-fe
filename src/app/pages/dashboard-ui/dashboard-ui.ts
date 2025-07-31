@@ -40,8 +40,10 @@ export class DashboardUi implements OnInit {
   protected displayedColumns: string[] = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
   private isMobile: boolean = false;
 
-  constructor(private router: Router,
-              private userDataService: UserDataService) {
+  constructor(
+    private router: Router,
+    private userDataService: UserDataService
+  ) {
 
   }
 

@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserDataService } from '../../services/user-data.service';
 import { Item, ItemPriceRecord } from '../../../models/items';
 import { ConfirmDialog } from '../../dialogs/confirm-dialog/confirm-dialog';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-item-ui', imports: [
@@ -84,7 +85,7 @@ export class ItemUi implements OnInit {
    * 根據 ID 載入商品資料
    */
   private loadItem(itemId: string): void {
-    this.userDataService.items$.subscribe(items => {
+    this.userDataService.items$.pipe(take(1)).subscribe(items => {
       this.item = items[itemId];
       if (this.item) {
         this.sortingHistory();

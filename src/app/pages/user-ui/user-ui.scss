@@ -1,0 +1,196 @@
+.user-ui-container {
+  position: relative;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cards-grid {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  > * {
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    > * {
+      margin-bottom: 24px;
+    }
+  }
+}
+mat-card {
+  overflow: hidden;
+
+  mat-card-header {
+    padding-bottom: 16px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+
+      font-size: 1.2em;
+      font-weight: 600;
+
+      mat-icon {
+        color: #1976d2;
+        margin-right: 12px;
+      }
+    }
+
+    mat-card-subtitle {
+      font-size: 0.8em;
+      color: #666;
+    }
+  }
+
+  mat-card-footer {
+    margin-top: 8px;
+  }
+}
+
+// 使用者資訊卡片樣式
+.user-info-card {
+  .user-details {
+    margin-bottom: 24px;
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+      }
+
+      .label {
+        font-weight: 500;
+        min-width: 100px;
+      }
+    }
+  }
+
+  form {
+    .form-actions {
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+}
+
+// 雲端同步卡片樣式
+.cloud-sync-card {
+  .sync-status {
+    margin-bottom: 24px;
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+
+      border-width: 1px;
+      border-radius: 8px;
+      border-style: solid;
+      margin-bottom: 12px;
+
+      border-color: #295129;
+      mat-icon {
+        margin-right: 12px;
+
+        color: #4caf50;
+      }
+
+      &.fail {
+        border-color: #ff5722;
+
+        mat-icon {
+          color: #ff5722;
+        }
+      }
+    }
+  }
+
+  .sync-actions {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+// Passkey 卡片樣式
+.passkey-card {
+  .passkey-info {
+    text-align: center;
+    padding: 32px 16px;
+
+    .large-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #ccc;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 8px;
+
+      &.hint {
+        color: #666;
+        font-size: 0.9em;
+      }
+    }
+  }
+
+  .passkey-list {
+    .passkey-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      transition: border-color 0.3s ease;
+
+      &:hover {
+        border-color: #1976d2;
+      }
+
+      .passkey-details {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+
+        mat-icon {
+          color: #4caf50;
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .passkey-text {
+          .passkey-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+          }
+
+          .passkey-meta {
+            font-size: 0.85em;
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+
+  .passkey-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+

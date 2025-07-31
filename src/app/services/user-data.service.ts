@@ -1,31 +1,43 @@
 import { Injectable } from '@angular/core';
 import { Item } from '../../models/items';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { StorageMap } from '@ngx-pwa/local-storage';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environment/environment';
+import { tap } from 'rxjs/operators';
+import { UserData } from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserDataService {
-  public items$ = new BehaviorSubject<{ [key: string]: Item }>({});
+  public items$ = new ReplaySubject<{ [key: string]: Item }>(1);
   private items: { [key: string]: Item } = {};
 
-  constructor() {
+  constructor(
+    private storageMap: StorageMap,
+    private http: HttpClient
+  ) {
     this.loadData();
   }
 
   public loadData() {
-    const data = localStorage.getItem('items');
-    if (data) {
-      try {
-        this.items = JSON.parse(data);
-      } catch (e) {
-        this.items = this.mockData();
-      }
-    } else {
-      this.items = this.mockData();
-    }
 
-    this.saveData();
+    console.log('loadData');
+    this.storageMap.get('items').subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.items = data;
+        } else {
+          this.items = this.mockData();
+        }
+        this.saveData();
+      },
+      error: () => {
+        this.items = this.mockData();
+        this.saveData();
+      }
+    });
   }
 
   public saveData() {
@@ -43,8 +55,11 @@ export class UserDataService {
       }
     }
 
-    localStorage.setItem('items', JSON.stringify(this.items));
-    this.items$.next(this.items);
+    this.storageMap.set('items', this.items).subscribe({
+      next: () => {
+        this.items$.next(this.items);
+      }
+    });
   }
 
   public createItem(item: Item) {
@@ -69,6 +84,29 @@ export class UserDataService {
   public deleteItem(itemId: string) {
     delete this.items[itemId];
     this.saveData();
+  }
+
+  public getCloudData(): Observable<UserData> {
+    return this.http.get<UserData>(environment.apiUrl + '/v1/user-data').pipe();
+  }
+
+  public syncCloud2Local(): Observable<UserData> {
+    return this.http.get<UserData>(environment.apiUrl + '/v1/user-data').pipe(
+      tap((cloudData) => {
+        this.items = cloudData.items;
+        this.saveData();
+
+        this.items$.next(this.items);
+      })
+    );
+  }
+
+  public syncLocal2Cloud(): Observable<UserData> {
+    return this.http.put<UserData>(environment.apiUrl + '/v1/user-data', this.items).pipe(
+      tap((res) => {
+
+      })
+    );
   }
 
   public mockData(): { [key: string]: Item } {

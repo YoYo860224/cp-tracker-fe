@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +17,7 @@ import { UserDataService } from '../../services/user-data.service';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Item } from '../../../models/items';
 import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs';
 
 
 export type ItemFormControls = {
@@ -65,12 +66,14 @@ export class ItemEditorUi implements OnInit {
     'ml', 'g', '包', '份', '個', '瓶'
   ];
 
-  constructor(private userDataService: UserDataService,
-              private formBuilder: FormBuilder,
-              private route: ActivatedRoute,
-              private router: Router,
-              private snackBar: MatSnackBar,
-              private elementRef: ElementRef) {
+  constructor(
+    private userDataService: UserDataService,
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private elementRef: ElementRef
+  ) {
     this.itemForm = this.formBuilder.group({
       name: ['', Validators.required],
       unit: ['個', Validators.required],
@@ -99,7 +102,7 @@ export class ItemEditorUi implements OnInit {
   }
 
   loadItemForEdit(itemId: string) {
-    this.userDataService.items$.subscribe(itemsMap => {
+    this.userDataService.items$.pipe(take(1)).subscribe(itemsMap => {
       let editingItem = itemsMap[itemId] || null;
       if (editingItem) {
         // 填入商品基本資訊，但保持價格歷史紀錄欄位為空
@@ -145,7 +148,7 @@ export class ItemEditorUi implements OnInit {
       };
 
       const createdItem = this.userDataService.createItem(newItem);
-      this.snackBar.open('增加成功！', '確定', { duration: 3000 });
+      this.snackBar.open('增加成功！', '確定', {duration: 3000});
       this.router.navigate(['/item', createdItem.id]).then();
     } else {
       this.itemForm.markAllAsTouched();
