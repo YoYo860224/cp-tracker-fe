@@ -58,7 +58,7 @@
                             <div class="record-info-container">
                                 <div class="record-brand">{{ element.brand }}</div>
                                 <div class="record-price">價格：${{ element.price }} / {{ element.quantity == 1 ? item.unit : element.quantity + ' ' + item.unit }}</div>
-                                <div class="record-unit-price">單價：${{ element.unitPrice }} / {{ item.unit }}</div>
+                                <div class="record-unit-price">單價：${{ element.unitPrice }} / {{item.perUnit == 1 ? item.perUnit : item.perUnit + ' ' + item.unit }}</div>
                             </div>
                         </td>
                     </ng-container>
