@@ -115,6 +115,40 @@
             }
         </mat-card>
 
+        <!-- 錢包連結卡片 -->
+        <mat-card class="wallet-link-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>account_balance_wallet</mat-icon>
+                    錢包連結
+                </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="wallet-info">
+                    @if (userInfo.walletAddress) {
+                        <p>已連結錢包地址：{{ userInfo.walletAddress }}</p>
+                    } @else {
+                        <p>連結您的錢包，透過錢包登入，將資料儲存在鏈上</p>
+                    }
+                </div>
+
+                <div class="form-actions">
+                    @if (userInfo.walletAddress) {
+                        <button mat-raised-button color="warn" (click)="unlinkWallet()">
+                            <mat-icon>link_off</mat-icon>
+                            移除錢包連結
+                        </button>
+                    } @else {
+                        <button mat-raised-button (click)="linkWallet()">
+                            <mat-icon>link</mat-icon>
+                            連結錢包
+                        </button>
+                    }
+                </div>
+            </mat-card-content>
+        </mat-card>
+
         <!-- 雲端儲存狀態卡片 -->
         <mat-card class="cloud-sync-card">
             <mat-card-header>

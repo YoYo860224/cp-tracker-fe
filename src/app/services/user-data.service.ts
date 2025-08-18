@@ -87,11 +87,11 @@ export class UserDataService {
   }
 
   public getCloudData(): Observable<UserData> {
-    return this.http.get<UserData>(environment.apiUrl + '/v1/user-data').pipe();
+    return this.http.get<UserData>(environment.apiUrl + '/v1/user/data').pipe();
   }
 
   public syncCloud2Local(): Observable<UserData> {
-    return this.http.get<UserData>(environment.apiUrl + '/v1/user-data').pipe(
+    return this.http.get<UserData>(environment.apiUrl + '/v1/user/data').pipe(
       tap((cloudData) => {
         this.items = cloudData.items;
         this.saveData();
@@ -102,7 +102,7 @@ export class UserDataService {
   }
 
   public syncLocal2Cloud(): Observable<UserData> {
-    return this.http.put<UserData>(environment.apiUrl + '/v1/user-data', this.items).pipe(
+    return this.http.put<UserData>(environment.apiUrl + '/v1/user/data', this.items).pipe(
       tap((res) => {
 
       })

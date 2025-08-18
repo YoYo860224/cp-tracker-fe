@@ -83,6 +83,18 @@ mat-card {
   }
 }
 
+// 錢包連結卡片樣式
+.wallet-link-card {
+  .wallet-info {
+    margin-bottom: 24px;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
 // 雲端同步卡片樣式
 .cloud-sync-card {
   .sync-status {

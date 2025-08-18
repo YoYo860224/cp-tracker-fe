@@ -39,18 +39,18 @@
                                         登入中...
                                     </button>
 
-                                    <button matButton="outlined" class="mat-icon-btn" disabled>
-                                        <mat-icon>fingerprint</mat-icon>
-                                        使用 Passkey 登入
+                                    <button matButton="outlined" type="button" class="mat-icon-btn" disabled>
+                                        <mat-icon>account_balance_wallet</mat-icon>
+                                        透過錢包登入
                                     </button>
                                 } @else {
                                     <button matButton="filled" (click)="onLogin()" [disabled]="!loginForm.valid">
                                         登入
                                     </button>
 
-                                    <button matButton="outlined" class="mat-icon-btn" (click)="onPasskeyLogin()">
-                                        <mat-icon>fingerprint</mat-icon>
-                                        使用 Passkey 登入
+                                    <button matButton="outlined" type="button" class="mat-icon-btn" (click)="onWalletLogin()">
+                                        <mat-icon>account_balance_wallet</mat-icon>
+                                        透過錢包登入
                                     </button>
                                 }
                             </div>

@@ -5,6 +5,7 @@ export interface User {
   email: string;
   displayName: string;
   token: string;
+  walletAddress?: string;
 }
 
 export interface UserData {

@@ -1,23 +1,26 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatBadgeModule } from '@angular/material/badge';
 import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service';
-import { UserDataService } from '../../services/user-data.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { map, switchMap } from 'rxjs/operators';
 import { User } from '../../../models/user';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { UserDataService } from '../../services/user-data.service';
+import { UserService } from '../../services/user.service';
+import { WalletService } from '../../services/wallet.service';
+
 
 export type UserInfoFormControls = {
   displayName: FormControl<string | null>;
@@ -76,7 +79,8 @@ export class UserUi implements OnInit {
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private walletService: WalletService
   ) {
     this.userInfoForm = this.fb.group({
       displayName: ['', [Validators.required, Validators.minLength(3)]]
@@ -101,7 +105,7 @@ export class UserUi implements OnInit {
       return null;
     }
 
-    return control.value === password ? null : {passwordMismatch: true};
+    return control.value === password ? null : { passwordMismatch: true };
   }
 
   ngOnInit(): void {
@@ -153,7 +157,7 @@ export class UserUi implements OnInit {
       error: (err) => {
         if (err.status === 400) {
           this.userInfoError = '顯示名稱已存在，請使用其他名稱';
-          this.userInfoForm.controls.displayName.setErrors({incorrect: true});
+          this.userInfoForm.controls.displayName.setErrors({ incorrect: true });
         } else {
           this.userInfoError = '顯示名稱更新失敗，請稍後再試';
         }
@@ -184,7 +188,7 @@ export class UserUi implements OnInit {
 
         if (err.status === 401) {
           this.passwordError = '舊密碼不正確，請重新輸入';
-          this.passwordForm.controls.oldPassword.setErrors({incorrect: true});
+          this.passwordForm.controls.oldPassword.setErrors({ incorrect: true });
         } else {
           this.passwordError = '密碼更新失敗，請稍後再試';
         }
@@ -236,6 +240,55 @@ export class UserUi implements OnInit {
         this.snackBar.open('上傳資料到雲端失敗', '關閉', {
           duration: 3000,
         });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  linkWallet() {
+    this.walletService.connectWallet().pipe(
+      switchMap(walletAddress =>
+        this.walletService.getWalletNonce(walletAddress).pipe(
+          map(nonce => ({ walletAddress, nonce }))
+        )
+      ),
+      switchMap(({ walletAddress, nonce }) => {
+        const message = `Sign for link: ${nonce}`;
+        return this.walletService.signMessage(walletAddress, message).pipe(
+          map(signature => ({ walletAddress, message, signature }))
+        );
+      }),
+      switchMap(({ walletAddress, message, signature }) =>
+        this.userService.linkWallet(walletAddress, message, signature)
+      )
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('錢包連接成功！', '關閉', { duration: 3000 });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        let errorMessage = '錢包連接失敗，請稍後再試';
+        if (err.status === 409) {
+          errorMessage = '此錢包地址已連接到其他帳號';
+        }
+        this.snackBar.open(errorMessage, '關閉', { duration: 3000 });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  unlinkWallet() {
+    this.snackBar.open('正在移除錢包連結...', '關閉', { duration: 3000 });
+
+    this.userService.unlinkWallet().subscribe({
+      next: () => {
+        this.snackBar.open('錢包連結已移除', '關閉', { duration: 3000 });
+        this.userInfo.walletAddress = undefined;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        let errorMessage = '移除錢包連結失敗，請稍後再試';
+        this.snackBar.open(errorMessage, '關閉', { duration: 3000 });
         this.cdr.detectChanges();
       }
     });

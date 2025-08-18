@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { StorageMap } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { StorageMap } from '@ngx-pwa/local-storage';
 import { environment } from '../../environment/environment';
 import { User } from '../../models/user';
 
@@ -27,27 +27,20 @@ export class UserService {
   }
 
   public register(email: string, displayName: string, password: string, inviteCode: string): Observable<User> {
-    return this.http.post<User>(environment.apiUrl + '/v1/user', {
-      email: email,
-      displayName: displayName,
-      password: password,
-      inviteCode: inviteCode
-    }).pipe(
-      tap((user) => {
-        if (user.token) {
-          this.setToken(user.token);
-        }
+    const payload = { email, displayName, password, inviteCode };
+    return this.http.post<User>(`${environment.apiUrl}/v1/user`, payload).pipe(
+      tap(user => {
+        if (user.token) this.setToken(user.token);
         this.userInfo$.next(user);
       })
     );
   }
 
   public login(email: string, password: string): Observable<User> {
-    return this.http.post<User>(environment.apiUrl + '/v1/user/login', {email: email, password: password}).pipe(
-      tap((user) => {
-        if (user.token) {
-          this.setToken(user.token);
-        }
+    const payload = { email, password };
+    return this.http.post<User>(`${environment.apiUrl}/v1/user/login`, payload).pipe(
+      tap(user => {
+        if (user.token) this.setToken(user.token);
         this.userInfo$.next(user);
       })
     );
@@ -59,7 +52,7 @@ export class UserService {
   }
 
   public getCurrentUser(): Observable<User> {
-    return this.http.get<User>(environment.apiUrl + '/v1/user').pipe(
+    return this.http.get<User>(`${environment.apiUrl}/v1/user`).pipe(
       tap((user) => {
         this.userInfo$.next(user);
       })
@@ -67,16 +60,46 @@ export class UserService {
   }
 
   public updateUserInfo(displayName: string): Observable<User> {
-    return this.http.put<User>(environment.apiUrl + '/v1/user', {displayName: displayName}).pipe(
-      tap((user) => {
+    const payload = { displayName };
+    return this.http.put<User>(`${environment.apiUrl}/v1/user`, payload).pipe(
+      tap(user => {
         this.userInfo$.next(user);
       })
     );
   }
 
-  public updatePassword(oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put<User>(environment.apiUrl + '/v1/user/password', {oldPassword: oldPassword, newPassword: newPassword}).pipe(
-      tap((user) => {
+  public updatePassword(oldPassword: string, newPassword: string): Observable<User> {
+    const payload = { oldPassword, newPassword };
+    return this.http.put<User>(`${environment.apiUrl}/v1/user/password`, payload).pipe(
+      tap(user => {
+        this.userInfo$.next(user);
+      })
+    );
+  }
+
+  public walletLogin(walletAddress: string, message: string, signature: string): Observable<User> {
+    const payload = { walletAddress, message, signature };
+    return this.http.post<User>(`${environment.apiUrl}/v1/user/wallet/login`, payload).pipe(
+      tap((user: User) => {
+        if (user.token) this.setToken(user.token);
+        this.userInfo$.next(user);
+      })
+    );
+  }
+
+  public linkWallet(walletAddress: string, message: string, signature: string): Observable<User> {
+    const payload = { walletAddress, message, signature };
+    return this.http.post<User>(`${environment.apiUrl}/v1/user/wallet/link`, payload).pipe(
+      tap((user: User) => {
+        if (user.token) this.setToken(user.token);
+        this.userInfo$.next(user);
+      })
+    );
+  }
+
+  public unlinkWallet(): Observable<User> {
+    return this.http.delete<User>(`${environment.apiUrl}/v1/user/wallet/link`).pipe(
+      tap((user: User) => {
         this.userInfo$.next(user);
       })
     );
