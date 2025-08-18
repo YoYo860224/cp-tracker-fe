@@ -1,15 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { UserService } from '../../services/user.service';
-import { Router } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { Router } from '@angular/router';
+import { map, switchMap } from 'rxjs';
+import { UserService } from '../../services/user.service';
+import { WalletService } from '../../services/wallet.service';
 
 export type LoginFormControls = {
   email: FormControl<string | null>;
@@ -56,7 +58,8 @@ export class LoginUi {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar,
-    private userService: UserService
+    private userService: UserService,
+    private walletService: WalletService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -83,7 +86,7 @@ export class LoginUi {
       return null;
     }
 
-    return control.value === password ? null : {passwordMismatch: true};
+    return control.value === password ? null : { passwordMismatch: true };
   }
 
   onLogin() {
@@ -91,7 +94,7 @@ export class LoginUi {
       this.isLoginLoading = true;
       this.loginError = '';
 
-      const {email, password} = this.loginForm.value;
+      const { email, password } = this.loginForm.value;
 
       this.userService.login(email!, password!).subscribe({
         next: (res) => {
@@ -128,7 +131,7 @@ export class LoginUi {
       this.isRegisterLoading = true;
       this.registerError = '';
 
-      const {email, username, password, invite_code} = this.registerForm.value;
+      const { email, username, password, invite_code } = this.registerForm.value;
 
       this.userService.register(email!, username!, password!, invite_code!).subscribe({
         next: (res) => {
@@ -181,7 +184,38 @@ export class LoginUi {
     });
   }
 
-  onPasskeyLogin() {
-    this.snackBar.open('此功能尚未實作，敬請期待！', '關閉', {duration: 3000});
+  onWalletLogin() {
+    this.walletService.connectWallet().pipe(
+      switchMap(walletAddress =>
+        this.walletService.getWalletNonce(walletAddress).pipe(
+          map(nonce => ({ walletAddress, nonce }))
+        )
+      ),
+      switchMap(({ walletAddress, nonce }) => {
+        const message = `Sign for login: ${nonce}`;
+        return this.walletService.signMessage(walletAddress, message).pipe(
+          map(signature => ({ walletAddress, message, signature }))
+        );
+      }),
+      switchMap(({ walletAddress, message, signature }) =>
+        this.userService.walletLogin(walletAddress, message, signature)
+      )
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('錢包登入成功！', '關閉', { duration: 3000 });
+        this.router.navigate(['/user']).then();
+      },
+      error: (err) => {
+        let errorMessage = '錢包登入失敗，請稍後再試';
+        if (err.status === 401) {
+          errorMessage = '錢包簽名無效';
+        } else if (err.status === 404) {
+          errorMessage = '錢包地址未連結到任何帳號';
+        } else if (err.status === 0) {
+          errorMessage = '網路連線錯誤，請檢查網路狀態';
+        }
+        this.snackBar.open(errorMessage, '關閉', { duration: 3000 });
+      }
+    });
   }
 }
