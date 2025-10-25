@@ -103,6 +103,10 @@
                                         <mat-icon>{{ item.invalid ? 'check_circle' : 'cancel' }}</mat-icon>
                                         <span>{{ item.invalid ? '取消無效標記' : '標記無效' }}</span>
                                     </button>
+                                    <button mat-menu-item (click)="editRecord(item)">
+                                        <mat-icon>edit</mat-icon>
+                                        <span>編輯紀錄</span>
+                                    </button>
                                     <button mat-menu-item (click)="deleteRecord(item)">
                                         <mat-icon>delete</mat-icon>
                                         <span>刪除紀錄</span>

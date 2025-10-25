@@ -138,7 +138,27 @@ export class ItemUi implements OnInit {
    * - 導航到編輯頁面
    */
   newRecord() {
-    this.router.navigate(['/edit-item', this.itemId!]).then();
+    this.router.navigate(['/new-record', this.itemId!]).then();
+  }
+
+
+  /**
+   * 編輯現有歷史記錄項目
+   * - 導航到編輯歷史記錄頁面
+   */
+  editRecord(historyItem: ItemPriceRecord) {
+    // 找到該歷史記錄在原始數據中的索引
+    const index = this.item!.records.findIndex((item) => {
+      return item.brand === historyItem.brand &&
+        item.price === historyItem.price &&
+        item.quantity === historyItem.quantity &&
+        item.date === historyItem.date &&
+        item.note === historyItem.note;
+    });
+
+    if (index > -1) {
+      this.router.navigate(['/edit-record', this.itemId!, index]).then();
+    }
   }
 
 
