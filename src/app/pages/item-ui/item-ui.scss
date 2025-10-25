@@ -1,6 +1,20 @@
 @use '@angular/material' as mat;
 
 .item-card {
+  // Override default mat-card-header flex styles to maximize title width
+  mat-card-header {
+    display: block;
+  }
+
+  .card-title-with-button {
+    h2 {
+      overflow-wrap: break-word;
+      word-break: break-word;
+      line-break: anywhere;
+      flex: 1;
+    }
+  }
+
   .item-info {
     display: flex;
     margin-bottom: 16px;

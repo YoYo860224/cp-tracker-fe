@@ -6,6 +6,21 @@
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <h2>{{ item.name }}</h2>
+
+                <div>
+                    <button mat-icon-button
+                            color="primary"
+                            (click)="newRecord()"
+                            matTooltip="新增歷史紀錄">
+                        <mat-icon>playlist_add</mat-icon>
+                    </button>
+                    <button mat-icon-button
+                            color="warn"
+                            (click)="deleteItem()"
+                            matTooltip="刪除商品">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
             </mat-card-title>
 
             <mat-card-subtitle>
@@ -13,21 +28,6 @@
                     <p>標準單位：每 {{ item.perUnit }}{{ item.unit }}</p>
                 </div>
             </mat-card-subtitle>
-
-            <div class="card-header-actions">
-                <button mat-icon-button
-                        color="primary"
-                        (click)="newRecord()"
-                        matTooltip="新增歷史紀錄">
-                    <mat-icon>playlist_add</mat-icon>
-                </button>
-                <button mat-icon-button
-                        color="warn"
-                        (click)="deleteItem()"
-                        matTooltip="刪除商品">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </div>
         </mat-card-header>
 
         <mat-card-content>
