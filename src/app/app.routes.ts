@@ -18,11 +18,19 @@ export const routes: Routes = [
     component: ItemUi
   },
   {
+    path: 'new-item',
+    component: ItemEditorUi
+  },
+  {
     path: 'edit-item/:id',
     component: ItemEditorUi
   },
   {
-    path: 'new-item',
+    path: 'new-record/:itemId',
+    component: ItemEditorUi
+  },
+  {
+    path: 'edit-record/:itemId/:recordIndex',
     component: ItemEditorUi
   },
   {

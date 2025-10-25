@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { Item } from '../../../models/items';
 import { UserDataService } from '../../services/user-data.service';
@@ -25,6 +26,7 @@ import { FormsModule } from '@angular/forms';
     MatTableModule,
     MatRippleModule,
     MatTooltipModule,
+    MatMenuModule,
     FormsModule
   ],
   templateUrl: './dashboard-ui.html',
@@ -120,11 +122,15 @@ export class DashboardUi implements OnInit {
     this.router.navigate(['/item', item.id]).then();
   }
 
+  protected newItem(): void {
+    this.router.navigate(['/new-item']).then();
+  }
+
   protected editItem(item: Item): void {
     this.router.navigate(['/edit-item', item.id]).then();
   }
 
-  protected newItem(): void {
-    this.router.navigate(['/new-item']).then();
+  protected newRecordForItem(item: Item): void {
+    this.router.navigate(['/new-record', item.id]).then();
   }
 }
