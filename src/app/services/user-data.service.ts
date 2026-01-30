@@ -31,10 +31,12 @@ export class UserDataService {
         } else {
           this.items = this.mockData();
         }
+        this.items$.next(this.items);
         this.saveData();
       },
       error: () => {
         this.items = this.mockData();
+        this.items$.next(this.items);
         this.saveData();
       }
     });
