@@ -33,13 +33,13 @@ export class UserDataService {
         }
         this.calculateBestPrices();
         this.items$.next(this.items);
-        this.saveData();
+        this.saveToStorage();
       },
       error: () => {
         this.items = this.mockData();
         this.calculateBestPrices();
         this.items$.next(this.items);
-        this.saveData();
+        this.saveToStorage();
       }
     });
   }
@@ -60,14 +60,18 @@ export class UserDataService {
     }
   }
 
-  public saveData() {
-    this.calculateBestPrices();
-
+  private saveToStorage() {
     this.storageMap.set('items', this.items).subscribe({
       next: () => {
-        this.items$.next(this.items);
+        // Storage saved successfully, but don't emit here as it's already done
       }
     });
+  }
+
+  public saveData() {
+    this.calculateBestPrices();
+    this.items$.next(this.items);
+    this.saveToStorage();
   }
 
   public createItem(item: Item) {
