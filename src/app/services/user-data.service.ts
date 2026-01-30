@@ -31,18 +31,20 @@ export class UserDataService {
         } else {
           this.items = this.mockData();
         }
+        this.calculateBestPrices();
         this.items$.next(this.items);
         this.saveData();
       },
       error: () => {
         this.items = this.mockData();
+        this.calculateBestPrices();
         this.items$.next(this.items);
         this.saveData();
       }
     });
   }
 
-  public saveData() {
+  private calculateBestPrices() {
     for (let itemsKey in this.items) {
       let item = this.items[itemsKey];
       item.bestPrice = undefined;
@@ -56,6 +58,10 @@ export class UserDataService {
         }
       }
     }
+  }
+
+  public saveData() {
+    this.calculateBestPrices();
 
     this.storageMap.set('items', this.items).subscribe({
       next: () => {
