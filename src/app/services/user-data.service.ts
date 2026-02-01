@@ -22,8 +22,6 @@ export class UserDataService {
   }
 
   public loadData() {
-
-    console.log('loadData');
     this.storageMap.get('items').subscribe({
       next: (data: any) => {
         if (data) {
@@ -33,13 +31,13 @@ export class UserDataService {
         }
         this.calculateBestPrices();
         this.items$.next(this.items);
-        this.saveToStorage();
+        this.saveData();
       },
       error: () => {
         this.items = this.mockData();
         this.calculateBestPrices();
         this.items$.next(this.items);
-        this.saveToStorage();
+        this.saveData();
       }
     });
   }
@@ -60,18 +58,13 @@ export class UserDataService {
     }
   }
 
-  private saveToStorage() {
-    this.storageMap.set('items', this.items).subscribe({
-      next: () => {
-        // Storage saved successfully, but don't emit here as it's already done
-      }
-    });
-  }
-
   public saveData() {
     this.calculateBestPrices();
-    this.items$.next(this.items);
-    this.saveToStorage();
+    this.storageMap.set('items', this.items).subscribe({
+      next: () => {
+        this.items$.next(this.items);
+      }
+    });
   }
 
   public createItem(item: Item) {
