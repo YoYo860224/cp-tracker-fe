@@ -29,14 +29,10 @@ export class UserDataService {
         } else {
           this.items = this.mockData();
         }
-        this.calculateBestPrices();
-        this.items$.next(this.items);
         this.saveData();
       },
       error: () => {
         this.items = this.mockData();
-        this.calculateBestPrices();
-        this.items$.next(this.items);
         this.saveData();
       }
     });
@@ -58,13 +54,14 @@ export class UserDataService {
     }
   }
 
+  private saveToStorage() {
+    this.storageMap.set('items', this.items).subscribe();
+  }
+
   public saveData() {
     this.calculateBestPrices();
-    this.storageMap.set('items', this.items).subscribe({
-      next: () => {
-        this.items$.next(this.items);
-      }
-    });
+    this.items$.next(this.items);
+    this.saveToStorage();
   }
 
   public createItem(item: Item) {
