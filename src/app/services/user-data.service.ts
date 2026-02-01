@@ -22,8 +22,6 @@ export class UserDataService {
   }
 
   public loadData() {
-
-    console.log('loadData');
     this.storageMap.get('items').subscribe({
       next: (data: any) => {
         if (data) {
@@ -40,7 +38,7 @@ export class UserDataService {
     });
   }
 
-  public saveData() {
+  private calculateBestPrices() {
     for (let itemsKey in this.items) {
       let item = this.items[itemsKey];
       item.bestPrice = undefined;
@@ -54,12 +52,16 @@ export class UserDataService {
         }
       }
     }
+  }
 
-    this.storageMap.set('items', this.items).subscribe({
-      next: () => {
-        this.items$.next(this.items);
-      }
-    });
+  private saveToStorage() {
+    this.storageMap.set('items', this.items).subscribe();
+  }
+
+  public saveData() {
+    this.calculateBestPrices();
+    this.items$.next(this.items);
+    this.saveToStorage();
   }
 
   public createItem(item: Item) {
