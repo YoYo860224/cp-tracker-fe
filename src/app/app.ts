@@ -39,7 +39,12 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     // 檢查是否已安裝 PWA
-    this.isPwaInstalled = localStorage.getItem(this.PWA_INSTALLED_KEY) === 'true';
+    try {
+      this.isPwaInstalled = localStorage.getItem(this.PWA_INSTALLED_KEY) === 'true';
+    } catch (error) {
+      // localStorage 可能在某些環境下不可用 (例如：隱私模式)
+      this.isPwaInstalled = false;
+    }
   }
 
   /**
@@ -61,7 +66,12 @@ export class App implements OnInit {
   onAppInstalled(): void {
     // 標記為已安裝
     this.isPwaInstalled = true;
-    localStorage.setItem(this.PWA_INSTALLED_KEY, 'true');
+    try {
+      localStorage.setItem(this.PWA_INSTALLED_KEY, 'true');
+    } catch (error) {
+      // localStorage 可能在某些環境下不可用 (例如：隱私模式)
+      console.warn('Unable to save PWA installation state to localStorage', error);
+    }
     this.deferredPrompt = null;
   }
 
