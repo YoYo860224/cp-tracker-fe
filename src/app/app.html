@@ -9,9 +9,11 @@
 
     <span class="title-space"></span>
 
-    <button matIconButton class="install-icon" (click)="showInstallPrompt()">
-        <mat-icon>install_desktop</mat-icon>
-    </button>
+    @if (!isPwaInstalled) {
+        <button matIconButton class="install-icon" (click)="showInstallPrompt()">
+            <mat-icon>install_desktop</mat-icon>
+        </button>
+    }
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">

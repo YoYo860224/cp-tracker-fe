@@ -18,7 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected navItem = [
     {
       name: 'Dashboard',
@@ -34,6 +34,13 @@ export class App {
 
   // PWA 安裝相關屬性
   private deferredPrompt: any = null;
+  protected isPwaInstalled = false;
+  private readonly PWA_INSTALLED_KEY = 'pwa-installed';
+
+  ngOnInit(): void {
+    // 檢查是否已安裝 PWA
+    this.isPwaInstalled = localStorage.getItem(this.PWA_INSTALLED_KEY) === 'true';
+  }
 
   /**
    * 監聽 beforeinstallprompt 事件
@@ -45,6 +52,17 @@ export class App {
 
     // 保存事件引用
     this.deferredPrompt = event;
+  }
+
+  /**
+   * 監聽 appinstalled 事件
+   */
+  @HostListener('window:appinstalled')
+  onAppInstalled(): void {
+    // 標記為已安裝
+    this.isPwaInstalled = true;
+    localStorage.setItem(this.PWA_INSTALLED_KEY, 'true');
+    this.deferredPrompt = null;
   }
 
   showInstallPrompt(): void {
