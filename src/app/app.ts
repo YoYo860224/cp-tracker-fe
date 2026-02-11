@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,7 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App {
   protected navItem = [
     {
       name: 'Dashboard',
@@ -34,17 +34,22 @@ export class App implements OnInit {
 
   // PWA 安裝相關屬性
   private deferredPrompt: any = null;
-  protected isPwaInstalled = false;
-  private readonly PWA_INSTALLED_KEY = 'pwa-installed';
 
-  ngOnInit(): void {
-    // 檢查是否已安裝 PWA
-    try {
-      this.isPwaInstalled = localStorage.getItem(this.PWA_INSTALLED_KEY) === 'true';
-    } catch (error) {
-      // localStorage 可能在某些環境下不可用 (例如：隱私模式)
-      this.isPwaInstalled = false;
-    }
+  /**
+   * 檢查是否處於 PWA 模式
+   * 透過檢查 display-mode 來判斷
+   */
+  protected get isPwaInstalled(): boolean {
+    return this.isPWA();
+  }
+
+  /**
+   * 判斷是否處在 PWA 當中
+   */
+  private isPWA(): boolean {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           window.matchMedia('(display-mode: minimal-ui)').matches;
   }
 
   /**
@@ -57,22 +62,6 @@ export class App implements OnInit {
 
     // 保存事件引用
     this.deferredPrompt = event;
-  }
-
-  /**
-   * 監聽 appinstalled 事件
-   */
-  @HostListener('window:appinstalled')
-  onAppInstalled(): void {
-    // 標記為已安裝
-    this.isPwaInstalled = true;
-    try {
-      localStorage.setItem(this.PWA_INSTALLED_KEY, 'true');
-    } catch (error) {
-      // localStorage 可能在某些環境下不可用 (例如：隱私模式)
-      console.warn('Unable to save PWA installation state to localStorage', error);
-    }
-    this.deferredPrompt = null;
   }
 
   showInstallPrompt(): void {
