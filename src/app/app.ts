@@ -18,7 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected navItem = [
     {
       name: 'Dashboard',
@@ -34,6 +34,25 @@ export class App {
 
   // PWA 安裝相關屬性
   private deferredPrompt: any = null;
+  protected isPwa = false;
+
+  ngOnInit(): void {
+    // 在初始化時檢查是否處在 PWA 當中
+    this.isPwa = this.checkIsPWA();
+  }
+
+  /**
+   * 判斷是否處在 PWA 當中
+   * 透過檢查 display-mode 來判斷
+   */
+  private checkIsPWA(): boolean {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return false;
+    }
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           window.matchMedia('(display-mode: minimal-ui)').matches;
+  }
 
   /**
    * 監聽 beforeinstallprompt 事件
