@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,7 +18,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected navItem = [
     {
       name: 'Dashboard',
@@ -34,12 +34,18 @@ export class App {
 
   // PWA 安裝相關屬性
   private deferredPrompt: any = null;
+  protected isPwa = false;
+
+  ngOnInit(): void {
+    // 在初始化時檢查是否處在 PWA 當中
+    this.isPwa = this.checkIsPWA();
+  }
 
   /**
    * 判斷是否處在 PWA 當中
    * 透過檢查 display-mode 來判斷
    */
-  protected isPWA(): boolean {
+  private checkIsPWA(): boolean {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
       return false;
     }
