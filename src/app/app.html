@@ -9,7 +9,7 @@
 
     <span class="title-space"></span>
 
-    @if (!isPwaInstalled) {
+    @if (!isPWA()) {
         <button matIconButton class="install-icon" (click)="showInstallPrompt()">
             <mat-icon>install_desktop</mat-icon>
         </button>

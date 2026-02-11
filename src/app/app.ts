@@ -36,17 +36,10 @@ export class App {
   private deferredPrompt: any = null;
 
   /**
-   * 檢查是否處於 PWA 模式
+   * 判斷是否處在 PWA 當中
    * 透過檢查 display-mode 來判斷
    */
-  protected get isPwaInstalled(): boolean {
-    return this.isPWA();
-  }
-
-  /**
-   * 判斷是否處在 PWA 當中
-   */
-  private isPWA(): boolean {
+  protected isPWA(): boolean {
     return window.matchMedia('(display-mode: standalone)').matches ||
            window.matchMedia('(display-mode: fullscreen)').matches ||
            window.matchMedia('(display-mode: minimal-ui)').matches;
