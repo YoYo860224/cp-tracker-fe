@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>建立副本</h2>
+
+<mat-dialog-content>
+    <p>請選擇要建立哪種副本：</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">取消</button>
+    <button mat-button (click)="copyClean()">乾淨的副本</button>
+    <button mat-raised-button color="primary" (click)="copyWithRecords()">連同紀錄副本</button>
+</mat-dialog-actions>

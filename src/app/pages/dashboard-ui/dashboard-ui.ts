@@ -9,12 +9,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Item } from '../../../models/items';
 import { UserDataService } from '../../services/user-data.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
+import { CopyItemDialog, CopyItemDialogResult } from '../../dialogs/copy-item-dialog/copy-item-dialog';
 
 @Component({
   selector: 'app-dashboard-ui',
@@ -52,7 +54,8 @@ export class DashboardUi implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private userDataService: UserDataService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
 
   }
@@ -146,5 +149,16 @@ export class DashboardUi implements OnInit, OnDestroy {
 
   protected newRecordForItem(item: Item): void {
     this.router.navigate(['/new-record', item.id]).then();
+  }
+
+  protected duplicateItem(item: Item): void {
+    const dialogRef = this.dialog.open(CopyItemDialog);
+    dialogRef.afterClosed().subscribe((result: CopyItemDialogResult) => {
+      if (result === 'clean') {
+        this.userDataService.copyItem(item, false);
+      } else if (result === 'with-records') {
+        this.userDataService.copyItem(item, true);
+      }
+    });
   }
 }

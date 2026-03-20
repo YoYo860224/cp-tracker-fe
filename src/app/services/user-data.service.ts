@@ -88,6 +88,20 @@ export class UserDataService {
     this.saveData();
   }
 
+  public copyItem(item: Item, withRecords: boolean): Item {
+    const newItem: Item = {
+      id: crypto.randomUUID(),
+      pined: false,
+      name: item.name + ' (副本)',
+      unit: item.unit,
+      perUnit: item.perUnit,
+      records: withRecords ? structuredClone(item.records) : []
+    };
+    this.items[newItem.id] = newItem;
+    this.saveData();
+    return newItem;
+  }
+
   public getCloudData(): Observable<UserData> {
     return this.http.get<UserData>(environment.apiUrl + '/v1/user/data').pipe();
   }
