@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatRippleModule } from '@angular/material/core';
@@ -8,7 +8,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Item } from '../../../models/items';
 import { UserDataService } from '../../services/user-data.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -27,24 +29,28 @@ import { FormsModule } from '@angular/forms';
     MatRippleModule,
     MatTooltipModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
     FormsModule
   ],
   templateUrl: './dashboard-ui.html',
   styleUrl: './dashboard-ui.scss'
 })
-export class DashboardUi implements OnInit {
+export class DashboardUi implements OnInit, OnDestroy {
   // Interactive data
   protected searchText: string = '';
   private items: Item[] = [];
 
   // UI
+  protected isLoading: boolean = true;
   protected displayedItems: Item[] = [];
   protected displayedColumns: string[] = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
   private isMobile: boolean = false;
+  private itemsSubscription?: Subscription;
 
   constructor(
     private router: Router,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private cdr: ChangeDetectorRef
   ) {
 
   }
@@ -54,12 +60,18 @@ export class DashboardUi implements OnInit {
     this.checkScreenSize();
 
     // 訂閱用戶數據服務中的商品列表
-    this.userDataService.items$.subscribe({
+    this.itemsSubscription = this.userDataService.items$.subscribe({
       next: (items) => {
         this.items = Object.values(items); // 儲存原始數據
+        this.isLoading = false;
         this.filterItems();
+        this.cdr.markForCheck(); // 確保在 zone 外的非同步更新能觸發變更偵測
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.itemsSubscription?.unsubscribe();
   }
 
   @HostListener('window:resize', ['$event'])
