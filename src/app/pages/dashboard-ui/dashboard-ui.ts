@@ -41,11 +41,13 @@ export class DashboardUi implements OnInit, OnDestroy {
   private items: Item[] = [];
 
   // UI
-  protected isLoading: boolean = true;
-  private itemsSubscription?: Subscription;
   protected displayedItems: Item[] = [];
   protected displayedColumns: string[] = ['pined', 'name', 'bestBrand', 'bestPrice', 'actions'];
   private isMobile: boolean = false;
+  protected isLoading: boolean = true;
+
+  // sub
+  private itemsSubscription?: Subscription;
 
   constructor(
     private router: Router,
