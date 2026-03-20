@@ -20,7 +20,11 @@
                 <mat-icon matPrefix>search</mat-icon>
             </mat-form-field>
 
-            @if (displayedItems.length === 0) {
+            @if (isLoading) {
+                <div class="loading-container">
+                    <mat-spinner diameter="48"></mat-spinner>
+                </div>
+            } @else if (displayedItems.length === 0) {
                 @if (searchText) {
                     <p class="no-items-message">沒有符合條件的商品，請嘗試其他關鍵字。</p>
                 } @else {
