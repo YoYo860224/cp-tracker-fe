@@ -108,6 +108,10 @@
                                         <mat-icon>playlist_add</mat-icon>
                                         <span>新增歷史紀錄</span>
                                     </button>
+                                    <button mat-menu-item (click)="duplicateItem(item)">
+                                        <mat-icon>content_copy</mat-icon>
+                                        <span>建立副本</span>
+                                    </button>
                                 </ng-template>
                             </mat-menu>
                         </td>
