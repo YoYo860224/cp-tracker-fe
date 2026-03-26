@@ -66,12 +66,15 @@ export class ItemEditorUi implements OnInit {
   protected mode = ItemEditorMode.NEW_ITEM;
   private itemId: string = '';
   private recordIndex: number = -1;
+  private targetItemId: string = '';
 
   // UI
   itemForm: FormGroup<ItemFormControls>;
   commonUnits: string[] = [
     'ml', 'g', '包', '份', '個', '瓶'
   ];
+  protected allItems: Item[] = [];
+  protected filteredItems: Item[] = [];
 
   constructor(
     private userDataService: UserDataService,
@@ -172,6 +175,10 @@ export class ItemEditorUi implements OnInit {
 
   load4EditRecord(itemId: string, recordIndex: number) {
     this.userDataService.items$.pipe(take(1)).subscribe(itemsMap => {
+      this.allItems = Object.values(itemsMap);
+      this.filteredItems = [...this.allItems];
+      this.targetItemId = itemId;
+
       let editingItem = itemsMap[itemId] || null;
       if (editingItem && editingItem.records[recordIndex]) {
         const record = editingItem.records[recordIndex];
@@ -190,6 +197,25 @@ export class ItemEditorUi implements OnInit {
         this.router.navigate(['/http/404'], { skipLocationChange: true }).then();
       }
     });
+  }
+
+  onItemNameInput(event: Event) {
+    if (this.mode !== ItemEditorMode.EDIT_RECORD) return;
+    const lower = ((event.target as HTMLInputElement).value ?? '').toLowerCase();
+    this.filteredItems = lower
+      ? this.allItems.filter(item => item.name.toLowerCase().includes(lower))
+      : [...this.allItems];
+  }
+
+  onItemSelected(itemName: string) {
+    const matched = this.allItems.find(item => item.name === itemName);
+    if (matched) {
+      this.targetItemId = matched.id;
+      this.itemForm.patchValue({
+        unit: matched.unit,
+        perUnit: matched.perUnit
+      });
+    }
   }
 
   back() {
@@ -218,22 +244,36 @@ export class ItemEditorUi implements OnInit {
       } else if (this.mode === ItemEditorMode.EDIT_RECORD) {
         // 編輯現有歷史記錄模式
         this.userDataService.items$.pipe(take(1)).subscribe(itemsMap => {
-          const item = itemsMap[this.itemId];
-          if (item && item.records[this.recordIndex]) {
-            // 更新指定的歷史記錄
-            item.records[this.recordIndex] = {
-              brand: formData.brand || '',
-              price: formData.price || 0,
-              quantity: formData.quantity || 1,
-              date: formData.date || new Date(),
-              note: formData.note || '',
-              invalid: item.records[this.recordIndex].invalid
-            };
-
-            this.userDataService.updateItem(item);
-            this.snackBar.open('修改成功！', '確定', { duration: 3000 });
-            this.router.navigate(['/item', this.itemId]).then();
+          const originalItem = itemsMap[this.itemId];
+          const targetItem = itemsMap[this.targetItemId];
+          if (!originalItem || !originalItem.records[this.recordIndex] || !targetItem) {
+            this.snackBar.open('修改失敗：找不到對應的品項或記錄', '確定', { duration: 3000 });
+            return;
           }
+
+          const newRecord = {
+            brand: formData.brand || '',
+            price: formData.price || 0,
+            quantity: formData.quantity || 1,
+            date: formData.date || new Date(),
+            note: formData.note || '',
+            invalid: originalItem.records[this.recordIndex].invalid
+          };
+
+          if (this.itemId === this.targetItemId) {
+            // 相同品項：直接更新該記錄
+            originalItem.records[this.recordIndex] = newRecord;
+            this.userDataService.updateItem(originalItem);
+          } else {
+            // 不同品項：將記錄從原品項移至新品項
+            originalItem.records.splice(this.recordIndex, 1);
+            targetItem.records.push(newRecord);
+            this.userDataService.updateItem(originalItem);
+            this.userDataService.updateItem(targetItem);
+          }
+
+          this.snackBar.open('修改成功！', '確定', { duration: 3000 });
+          this.router.navigate(['/item', this.targetItemId]).then();
         });
       } else {
         // 新增商品或新增歷史記錄模式

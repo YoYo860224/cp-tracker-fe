@@ -20,7 +20,15 @@
 
             <mat-form-field appearance="outline" floatLabel="always" hideRequiredMarker="true">
                 <mat-label>品項</mat-label>
-                <input matInput formControlName="name" placeholder="請輸入商品名稱" required [readonly]="isEditMode || isEditRecordMode">
+                <input matInput formControlName="name" placeholder="請輸入商品名稱" required
+                       [readonly]="isEditMode"
+                       [matAutocomplete]="itemAuto"
+                       (input)="onItemNameInput($event)">
+                <mat-autocomplete #itemAuto="matAutocomplete" (optionSelected)="onItemSelected($event.option.value)">
+                    @for (item of filteredItems; track item.id) {
+                        <mat-option [value]="item.name">{{ item.name }}</mat-option>
+                    }
+                </mat-autocomplete>
                 @if (itemForm.controls.name.hasError('required')) {
                     <mat-error>
                         品項為必填欄位
