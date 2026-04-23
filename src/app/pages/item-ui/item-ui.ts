@@ -183,7 +183,7 @@ export class ItemUi implements OnInit {
       brand: historyItem.brand,
       price: historyItem.price,
       quantity: historyItem.quantity,
-      date: historyItem.date,
+      date: new Date(),
       note: historyItem.note ? historyItem.note + ' (副本)' : '(副本)',
       invalid: historyItem.invalid
     };
