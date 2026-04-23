@@ -107,6 +107,10 @@
                                         <mat-icon>edit</mat-icon>
                                         <span>編輯紀錄</span>
                                     </button>
+                                    <button mat-menu-item (click)="duplicateRecord(item)">
+                                        <mat-icon>content_copy</mat-icon>
+                                        <span>建立副本</span>
+                                    </button>
                                     <button mat-menu-item (click)="deleteRecord(item)">
                                         <mat-icon>delete</mat-icon>
                                         <span>刪除紀錄</span>
