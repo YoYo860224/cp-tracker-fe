@@ -7,7 +7,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserDataService } from '../../services/user-data.service';
@@ -42,6 +42,7 @@ export class ItemUi implements OnInit {
   private isMobile: boolean = false;
 
   constructor(private dialog: MatDialog,
+              private snackBar: MatSnackBar,
               private userDataService: UserDataService,
               private changeDetectorRef: ChangeDetectorRef,
               private route: ActivatedRoute,
@@ -170,6 +171,27 @@ export class ItemUi implements OnInit {
     this.item!.records = this.displayedItemHistory;
     this.userDataService.updateItem(this.item!);
     this.sortingHistory();
+  }
+
+  /**
+   * 建立歷史記錄的副本
+   */
+  duplicateRecord(historyItem: ItemPriceRecord) {
+    if (!this.item) return;
+
+    const newRecord: ItemPriceRecord = {
+      brand: historyItem.brand,
+      price: historyItem.price,
+      quantity: historyItem.quantity,
+      date: historyItem.date,
+      note: historyItem.note ? historyItem.note + ' (副本)' : '(副本)',
+      invalid: historyItem.invalid
+    };
+
+    this.item.records.push(newRecord);
+    this.userDataService.updateItem(this.item);
+    this.sortingHistory();
+    this.snackBar.open('建立副本成功', '確定', { duration: 3000 });
   }
 
   /**
